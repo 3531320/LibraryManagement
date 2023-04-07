@@ -30,3 +30,11 @@ export function updateBook(data){
     data:data
   })
 }
+
+export function bookDetail(data){
+  return HttpRequest({
+    method:"get",
+    url:"/api/bookDetail",
+    data:data
+  })
+}

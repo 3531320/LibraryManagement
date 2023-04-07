@@ -4,14 +4,13 @@
       style="width: 50%"
       v-model="name"
       placeholder="请输入书名"
-      size="normal"
       clearable
     ></el-input>
     <el-button @click="getDate">查询</el-button>
-    <el-button @click="delBook" :disabled="ids.length === 0"
-      >批量删除</el-button
-    >
+    <el-button @click="delBook" :disabled="ids.length === 0" >批量删除</el-button>
     <el-button @click="addbook">添加图书</el-button>
+    <el-button type="primary" size="default" @click="goDetail">详情页面</el-button>
+    
     <div class="table">
       <el-table
         ref="multipleTableRef"
@@ -52,16 +51,13 @@
         <el-form-item label="编码">
           <el-input
             v-model="bookItem.id"
-            placeholder=""
-            size="normal"
             readonly
           ></el-input>
         </el-form-item>
-        <el-form-item label="名字">
+        <el-form-item label="书名">
           <el-input
             v-model="bookItem.name"
-            placeholder=""
-            size="normal"
+            placeholder="请输入书名"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -79,7 +75,7 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
 import qs from "qs";
-import { getDate, addBook ,delBook,updateBook} from "../httpRequest";
+import { getDate, addBook ,delBook,updateBook,bookDetail} from "../httpRequest";
 export default {
   name: "HelloWorld",
   data() {
@@ -88,7 +84,7 @@ export default {
       dataList: [],
       columns: [
         { label: "编码", id: "id" },
-        { label: "名字", id: "name" },
+        { label: "书名", id: "name" },
       ],
       ids: [],
       dialogVisible: false, //是否显示对话框
@@ -141,16 +137,20 @@ export default {
     },
     //编辑按钮
     handleEdit(row, type) {
-      this.bookItem = row;
-      console.log(this.bookItem);
       if (type == "edit") {
-        this.dialogVisible = true;
+        this.bookDetail(row.id);
       } else {
         //删除
         this.ids = [];
         this.ids.push(row.id);
         this.delBook();
       }
+    },
+    bookDetail(id){
+      bookDetail({id:id}).then(res=>{
+        this.bookItem = res.msg[0];
+        this.dialogVisible = true;
+      })
     },
 
     //对话框确认事件
@@ -166,6 +166,14 @@ export default {
       });
      
     },
+    goDetail(){
+      this.$router.push({
+        name: "detail",//name的值对应routes.js中的name值
+        params: {
+          name: "张三", //传递参数
+        },
+      })
+    }
   },
 };
 </script>

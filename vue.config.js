@@ -34,7 +34,9 @@ module.exports = {
   },
   //跨域问题
   devServer:{
-    // open:true,
+    open:true,
+    host: 'localhost',
+    port: 8080,
     // overlay:{
     //   warning:false,
     //   errors:true,

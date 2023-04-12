@@ -14,7 +14,13 @@ const routes = [
             name: "echat",
             component: () => import("../components/echat.vue")
         },
-      ]
+        {
+            path: "/books",
+            name: "books",
+            component: () => import("../components/books.vue")
+        },
+      ],
+      redirect:"/books" //重定向路由
   },
   {
       path: "/detail/:id",

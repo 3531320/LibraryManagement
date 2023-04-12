@@ -7,7 +7,7 @@
       <el-container>
         <el-aside width="200px" class="aside">
           <el-scrollbar>
-            <el-menu :default-openeds="['1']" default-active="echat"  :router="true"  @select="handleSelect">
+            <el-menu :default-openeds="['1']" default-active="books"  :router="true"  @select="handleSelect">
               <el-sub-menu index="1">
                 <template #title>
                   <el-icon>
@@ -16,13 +16,14 @@
                 </template>
                 <el-menu-item-group>
                   <template #title></template>
-                  <el-menu-item index="echat">
-                    <el-icon><House /></el-icon>图标
-                    <!-- <router-link to="/echat"><el-icon><House /></el-icon>图标</router-link> -->
+                  <el-menu-item index="books" >
+                    <el-icon><House /></el-icon>图书
                   </el-menu-item>
-                  <el-menu-item index="index">
+                  <el-menu-item index="echat" >
+                    <el-icon><House /></el-icon>图标
+                  </el-menu-item>
+                  <el-menu-item index="index" >
                     <el-icon><Document /></el-icon>文档管理
-                    <!-- <router-link to="/index"><el-icon><Document /></el-icon>文档管理</router-link> -->
                   </el-menu-item>
                 </el-menu-item-group>
               </el-sub-menu>
@@ -57,8 +58,15 @@ export default {
  
   created() {},
   methods: {
-    handleSelect(index,indexPath){
+    handleSelect(index,indexPath,item,routeResult){
       console.log(index,indexPath);
+      console.log(item,routeResult);
+    }
+  },
+  watch: {
+    $route(to, from) {
+      console.log(to);
+      console.log(from);
     }
   },
 };

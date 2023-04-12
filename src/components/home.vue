@@ -17,10 +17,10 @@
                 <el-menu-item-group>
                   <template #title></template>
                   <el-menu-item index="books" >
-                    <el-icon><House /></el-icon>图书
+                    <el-icon><House /></el-icon>书架
                   </el-menu-item>
                   <el-menu-item index="echat" >
-                    <el-icon><House /></el-icon>图标
+                    <el-icon><House /></el-icon>图表
                   </el-menu-item>
                   <el-menu-item index="index" >
                     <el-icon><Document /></el-icon>文档管理

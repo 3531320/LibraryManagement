@@ -8,13 +8,11 @@
     name:"detail",
     data(){
       return{
-        name:""
+        name:"2222"
       }
     },
     props:{},
     created(){
-      this.name = this.$route.query.name;//获取路由参数
-      console.log(this.$route);
     },
     methods(){
 

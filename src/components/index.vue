@@ -7,10 +7,10 @@
       clearable
     ></el-input>
     <el-button @click="getDate">查询</el-button>
-    <el-button @click="delBook" :disabled="ids.length === 0" >批量删除</el-button>
+    <el-button @click="delBook" type="danger" :disabled="ids.length === 0"
+      >批量删除</el-button
+    >
     <el-button @click="addbook">添加图书</el-button>
-    <el-button type="primary" size="default" @click="goDetail">详情页面</el-button>
-    
     <div class="table">
       <el-table
         ref="multipleTableRef"
@@ -27,8 +27,14 @@
           :label="col.label"
           :width="col.width"
         >
+        <template #default="scope">
+          <div v-if="scope.column.rawColumnKey=='updateTime'">
+            {{ scope.row[scope.column.rawColumnKey] ? scope.row[scope.column.rawColumnKey]:"--" }}
+          </div>
+          <div v-else>{{ scope.row[scope.column.rawColumnKey] }}</div>
+        </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="250px">
           <template #default="scope">
             <el-button
               type="primary"
@@ -42,6 +48,12 @@
               @click="handleEdit(scope.row, 'del')"
               >删除</el-button
             >
+            <el-button
+              type="primary"
+              size="default"
+              @click="goDetail(scope.row)"
+              >跳转详情</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -49,16 +61,10 @@
     <el-dialog title="编辑图片信息" v-model="dialogVisible" width="30%">
       <el-form :model="bookItem" class="demo-form-inline">
         <el-form-item label="编码">
-          <el-input
-            v-model="bookItem.id"
-            readonly
-          ></el-input>
+          <el-input v-model="bookItem.id" readonly></el-input>
         </el-form-item>
         <el-form-item label="书名">
-          <el-input
-            v-model="bookItem.name"
-            placeholder="请输入书名"
-          ></el-input>
+          <el-input v-model="bookItem.name" placeholder="请输入书名"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -72,10 +78,14 @@
 </template>
 
 <script>
-import axios from "axios";
-import { ElMessage } from "element-plus";
-import qs from "qs";
-import { getDate, addBook ,delBook,updateBook,bookDetail} from "../httpRequest";
+import {
+  getDate,
+  addBook,
+  delBook,
+  updateBook,
+  bookDetail,
+} from "../httpRequest";
+import { ElMessage, ElMessageBox } from "element-plus";
 export default {
   name: "HelloWorld",
   data() {
@@ -83,16 +93,15 @@ export default {
       name: "",
       dataList: [],
       columns: [
-        { label: "编码", id: "id" },
-        { label: "书名", id: "name" },
+        { label: "编码", id: "id" ,width:"100"},
+        { label: "书名", id: "name",},
+        { label: "创建时间", id: "createTime",width:"200"},
+        { label: "更新时间", id: "updateTime" ,width:"200"},
       ],
       ids: [],
       dialogVisible: false, //是否显示对话框
       bookItem: {}, //图书详情信息
     };
-  },
-  props: {
-    msg: String,
   },
   created() {
     this.getDate();
@@ -119,15 +128,23 @@ export default {
       });
     },
     delBook() {
-      delBook({id: this.ids, }).then((res) => {
-        ElMessage({
-          message: "删除成功!",
-          type: "success",
-        });
-        this.ids = [];
-        this.name = "";
-        this.getDate();
-      });
+      ElMessageBox.confirm("您确认删除吗？", "提示", {
+        confirmButtonText: "删除",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          delBook({ id: this.ids }).then((res) => {
+            ElMessage({
+              message: "删除成功!",
+              type: "success",
+            });
+            this.ids = [];
+            this.name = "";
+            this.getDate();
+          });
+        })
+        .catch(() => {});
     },
     // 取出数组的id
     handleSelectionChange(val) {
@@ -146,34 +163,38 @@ export default {
         this.delBook();
       }
     },
-    bookDetail(id){
-      bookDetail({id:id}).then(res=>{
+    bookDetail(id) {
+      bookDetail({ id: id }).then((res) => {
         this.bookItem = res.msg[0];
         this.dialogVisible = true;
-      })
+      });
     },
 
     //对话框确认事件
     confirm() {
-      updateBook( { id: this.bookItem.id, name: this.bookItem.name }).then((res) => {
-        ElMessage({
-          message: "更新成功!",
-          type: "success",
-        });
-        this.dialogVisible = false;
-        this.ids = [];
-        this.getDate();
-      });
-     
+      updateBook({ id: this.bookItem.id, name: this.bookItem.name }).then(
+        (res) => {
+          ElMessage({
+            message: "更新成功!",
+            type: "success",
+          });
+          this.dialogVisible = false;
+          this.ids = [];
+          this.getDate();
+        }
+      );
     },
-    goDetail(){
+    goDetail(row) {
       this.$router.push({
-        name: "detail",//name的值对应routes.js中的name值
-        params: {
-          name: "张三", //传递参数
+        name: "detail", //name的值对应routes.js中的name值
+        query: {
+          name: row.name, //传递参数 //会拼接在路由上  /detail/8?name=百草屋
         },
-      })
-    }
+        params: {
+          id: row.id, //会拼接在路由上  /detail/8
+        },
+      });
+    },
   },
 };
 </script>
@@ -181,9 +202,10 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
 .index {
+  text-align: center;
   .table {
     width: 90%;
-    margin: 0 auto;
+    margin: 20px auto;
   }
 }
 </style>

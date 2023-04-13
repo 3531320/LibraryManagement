@@ -19,13 +19,14 @@ const routes = [
             name: "books",
             component: () => import("../components/books.vue")
         },
+        {
+            path: "/detail/:id",
+            name: "detail",
+            component: () => import("../components/detail.vue")
+        }
       ],
       redirect:"/books" //重定向路由
-  },
-  {
-      path: "/detail/:id",
-      name: "detail",
-      component: () => import("../components/detail.vue")
   }
+  
 ]
 export default routes;
